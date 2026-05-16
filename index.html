@@ -507,6 +507,23 @@ return;
 
 histories.forEach(h => {
 
+let detailText = "";
+
+Object.keys(h.details).forEach(k => {
+
+if(h.details[k] > 0){
+
+detailText += `
+<div class="small">
+${Number(k).toLocaleString("vi-VN")} :
+${h.details[k]} tờ
+</div>
+`;
+
+}
+
+});
+
 box.innerHTML += `
 <div class="history">
 
@@ -523,6 +540,8 @@ Người dùng: ${h.name}
 <div class="small">
 ${h.time}
 </div>
+
+${detailText}
 
 </div>
 `;
