@@ -509,21 +509,29 @@ renderHistory();
 
 function renderHistory(){
 
-let histories = getData();
+const allHistories =
+JSON.parse(
+localStorage.getItem("thinh_history") || "[]"
+);
+
+let histories = [];
+
+if(currentUser.r === "ADMIN"){
+
+histories = allHistories;
+
+}else{
+
+histories = allHistories.filter(
+h => h.user === currentUser.u
+);
+
+}
 
 const box =
 document.getElementById("historyBox");
 
 box.innerHTML = "";
-
-if(currentUser.r !== "ADMIN"){
-
-histories =
-histories.filter(
-h => h.user === currentUser.u
-);
-
-}
 
 if(histories.length === 0){
 
@@ -537,6 +545,8 @@ return;
 histories.forEach(h => {
 
 let detailText = "";
+
+if(h.details){
 
 Object.keys(h.details).forEach(k => {
 
@@ -553,6 +563,8 @@ ${h.details[k]} tờ
 
 });
 
+}
+
 box.innerHTML += `
 <div class="history">
 
@@ -563,7 +575,7 @@ ${Number(h.total).toLocaleString("vi-VN")} VNĐ
 </div>
 
 <div class="small">
-👤 Người dùng: ${h.name}
+👤 Người dùng: ${h.name || h.user}
 </div>
 
 <div class="small">
@@ -571,7 +583,7 @@ ${Number(h.total).toLocaleString("vi-VN")} VNĐ
 </div>
 
 <div class="detail-box">
-${detailText}
+${detailText || "Không có chi tiết"}
 </div>
 
 </div>
