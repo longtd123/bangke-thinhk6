@@ -65,6 +65,11 @@ font-size:18px;
 border:1px solid #ccc;
 border-radius:14px;
 margin-bottom:12px;
+outline:none;
+}
+
+input:focus{
+border:2px solid #1e88e5;
 }
 
 button{
@@ -188,9 +193,16 @@ BẢNG KÊ TIỀN MẶT CỦA THỊNH
 
 <div class="clock" id="clock"></div>
 
-<input id="username" placeholder="Tên đăng nhập">
+<input
+id="username"
+inputmode="numeric"
+placeholder="Tên đăng nhập">
 
-<input id="password" type="password" placeholder="Mật khẩu">
+<input
+id="password"
+type="password"
+inputmode="numeric"
+placeholder="Mật khẩu">
 
 <button class="primary" onclick="login()">
 Đăng nhập
@@ -409,11 +421,14 @@ MONEY.forEach(m => {
 box.innerHTML += `
 <div class="money-item">
 
-<label><strong>${m[0]}</strong></label>
+<label>
+<strong>${m[0]}</strong>
+</label>
 
 <input
-type="number"
-min="0"
+type="tel"
+inputmode="numeric"
+pattern="[0-9]*"
 data-money="${m[1]}"
 oninput="calc()"
 placeholder="Nhập số tờ">
@@ -496,6 +511,11 @@ function renderHistory(){
 
 let histories = getData();
 
+const box =
+document.getElementById("historyBox");
+
+box.innerHTML = "";
+
 if(currentUser.r !== "ADMIN"){
 
 histories =
@@ -504,11 +524,6 @@ h => h.user === currentUser.u
 );
 
 }
-
-const box =
-document.getElementById("historyBox");
-
-box.innerHTML = "";
 
 if(histories.length === 0){
 
@@ -525,7 +540,7 @@ let detailText = "";
 
 Object.keys(h.details).forEach(k => {
 
-if(h.details[k] > 0){
+if(Number(h.details[k]) > 0){
 
 detailText += `
 <div class="detail-line">
