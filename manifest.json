@@ -1,0 +1,9 @@
+
+{
+"name":"BẢNG KÊ CỦA THỊNHK6",
+"short_name":"THINHK6",
+"display":"standalone",
+"start_url":"/",
+"background_color":"#edf2f7",
+"theme_color":"#0057d9"
+}

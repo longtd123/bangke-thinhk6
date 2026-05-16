@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BẢNG KÊ CỦA THỊNHK6</title>
+
+<meta name="theme-color" content="#0057d9">
+
+<link rel="manifest" href="manifest.json">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#edf2f7;padding:12px;color:#222}
+.container{max-width:700px;margin:auto}
+.card{background:#fff;padding:18px;border-radius:20px;margin-bottom:16px;box-shadow:0 4px 16px rgba(0,0,0,.08)}
+.title{text-align:center;font-size:28px;font-weight:900;color:#0057d9;margin-bottom:10px}
+.clock{text-align:center;font-size:15px;font-weight:600;color:#666;margin-bottom:16px}
+.welcome{text-align:center;font-size:20px;font-weight:800;color:#0a9444;margin-bottom:14px}
+input{width:100%;padding:16px;font-size:18px;border:1px solid #ccc;border-radius:14px;margin-bottom:12px}
+button{width:100%;padding:16px;border:none;border-radius:14px;font-size:18px;font-weight:800;cursor:pointer;margin-top:10px}
+.primary{background:#0057d9;color:white}
+.danger{background:#d93025;color:white}
+.money-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.money-item{background:#f5f7fb;padding:10px;border-radius:12px}
+.total{text-align:center;font-size:32px;font-weight:900;color:#0a9444;margin-top:18px}
+.history{background:#f5f7fb;padding:12px;border-radius:12px;margin-bottom:10px}
+.small{font-size:14px;color:#666;margin-top:4px;line-height:1.5}
+.hidden{display:none!important}
+.badge{display:inline-block;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700;margin-left:8px}
+.admin{background:#ffd54f}
+.user{background:#90caf9}
+@media(max-width:480px){
+.money-grid{grid-template-columns:1fr}
+.title{font-size:24px}
+.total{font-size:26px}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card" id="loginCard">
+<div class="title">BẢNG KÊ CỦA THỊNHK6</div>
+<div class="clock" id="clock"></div>
+
+<input id="username" placeholder="Tên đăng nhập">
+<input id="password" type="password" placeholder="Mật khẩu">
+
+<button class="primary" onclick="login()">Đăng nhập</button>
+</div>
+
+<div id="app" class="hidden">
+
+<div class="card">
+
+<div class="title">BẢNG KÊ CỦA THỊNHK6</div>
+
+<div class="clock" id="clock2"></div>
+
+<div class="welcome" id="welcome"></div>
+
+<div id="roleInfo" style="text-align:center;margin-bottom:15px"></div>
+
+<div class="money-grid" id="moneyGrid"></div>
+
+<div class="total" id="totalMoney">0 VNĐ</div>
+
+<button class="primary" onclick="saveHistory()">Lưu bảng kê</button>
+
+<button class="danger" onclick="logout()">Đăng xuất</button>
+
+</div>
+
+<div class="card">
+
+<div style="font-size:22px;font-weight:800;margin-bottom:14px">
+Lịch sử đếm tiền
+</div>
+
+<div id="historyBox"></div>
+
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const USERS = [
+{u:"3060167",p:"1",r:"ADMIN",n:"ADMIN"},
+{u:"3092537",p:"1",r:"ADMIN",n:"Cụ"},
+{u:"3164083",p:"1",r:"USER",n:"Hoàng Văn Phưởng"},
+{u:"3141158",p:"1",r:"USER",n:"Nguyễn Thành Nam"},
+{u:"3162642",p:"1",r:"USER",n:"Lê Quang Hưng"},
+{u:"3060536",p:"1",r:"USER",n:"Nguyễn Đình Đạt"},
+{u:"3029358",p:"1",r:"USER",n:"Hoàng Thái Bình"},
+{u:"3072281",p:"1",r:"USER",n:"Hưng Khẹc"},
+{u:"3084763",p:"1",r:"USER",n:"Ông Chú Việt"}
+];
+
+const MONEY = [
+["500K",500000],
+["200K",200000],
+["100K",100000],
+["50K",50000],
+["20K",20000],
+["10K",10000],
+["5K",5000],
+["2K",2000],
+["1K",1000]
+];
+
+function getData(){
+return JSON.parse(localStorage.getItem("thinhk6_history") || "[]");
+}
+
+function saveData(data){
+localStorage.setItem("thinhk6_history", JSON.stringify(data));
+}
+
+let currentUser = null;
+
+function updateClock(){
+
+const now = new Date();
+
+const days = ["Chủ nhật","Thứ hai","Thứ ba","Thứ tư","Thứ năm","Thứ sáu","Thứ bảy"];
+
+const text =
+days[now.getDay()] + " - " +
+now.toLocaleDateString("vi-VN") + " - " +
+now.toLocaleTimeString("vi-VN");
+
+document.getElementById("clock").innerText = text;
+
+const c2 = document.getElementById("clock2");
+if(c2){
+c2.innerText = text;
+}
+
+}
+
+setInterval(updateClock,1000);
+updateClock();
+
+function login(){
+
+const u = document.getElementById("username").value.trim();
+const p = document.getElementById("password").value.trim();
+
+const found = USERS.find(x => x.u === u && x.p === p);
+
+if(!found){
+alert("Sai tài khoản hoặc mật khẩu");
+return;
+}
+
+currentUser = found;
+
+document.getElementById("loginCard").classList.add("hidden");
+document.getElementById("app").classList.remove("hidden");
+
+document.getElementById("welcome").innerText =
+"Xin chào, " + currentUser.n + "!";
+
+document.getElementById("roleInfo").innerHTML =
+"<strong>" + currentUser.u + "</strong>" +
+"<span class='badge " +
+(currentUser.r === "ADMIN" ? "admin":"user") +
+"'>" + currentUser.r + "</span>";
+
+renderMoney();
+renderHistory();
+
+}
+
+function renderMoney(){
+
+const box = document.getElementById("moneyGrid");
+
+box.innerHTML = "";
+
+MONEY.forEach(m => {
+
+box.innerHTML += `
+<div class="money-item">
+<label>${m[0]}</label>
+<input type="number" min="0" value="0"
+data-money="${m[1]}"
+oninput="calc()">
+</div>
+`;
+
+});
+
+calc();
+
+}
+
+function calc(){
+
+let total = 0;
+
+document.querySelectorAll("[data-money]").forEach(el => {
+
+const qty = Number(el.value || 0);
+const val = Number(el.dataset.money);
+
+total += qty * val;
+
+});
+
+document.getElementById("totalMoney").innerText =
+total.toLocaleString("vi-VN") + " VNĐ";
+
+}
+
+function saveHistory(){
+
+let total = 0;
+let details = {};
+
+document.querySelectorAll("[data-money]").forEach(el => {
+
+const qty = Number(el.value || 0);
+const val = Number(el.dataset.money);
+
+details[val] = qty;
+
+total += qty * val;
+
+});
+
+const histories = getData();
+
+histories.unshift({
+user:currentUser.u,
+name:currentUser.n,
+role:currentUser.r,
+details:details,
+total:total,
+time:new Date().toLocaleString("vi-VN")
+});
+
+saveData(histories);
+
+alert("Đã lưu bảng kê");
+
+renderHistory();
+
+}
+
+function renderHistory(){
+
+let histories = getData();
+
+if(currentUser.r !== "ADMIN"){
+histories = histories.filter(h => h.user === currentUser.u);
+}
+
+const box = document.getElementById("historyBox");
+
+box.innerHTML = "";
+
+if(histories.length === 0){
+box.innerHTML = "<div class='small'>Chưa có dữ liệu</div>";
+return;
+}
+
+histories.forEach(h => {
+
+box.innerHTML += `
+<div class="history">
+
+<div><strong>${Number(h.total).toLocaleString("vi-VN")} VNĐ</strong></div>
+
+<div class="small">Người dùng: ${h.name}</div>
+
+<div class="small">${h.time}</div>
+
+<div class="small" style="margin-top:8px">
+500K: ${h.details[500000] || 0} tờ<br>
+200K: ${h.details[200000] || 0} tờ<br>
+100K: ${h.details[100000] || 0} tờ<br>
+50K: ${h.details[50000] || 0} tờ<br>
+20K: ${h.details[20000] || 0} tờ<br>
+10K: ${h.details[10000] || 0} tờ<br>
+5K: ${h.details[5000] || 0} tờ<br>
+2K: ${h.details[2000] || 0} tờ<br>
+1K: ${h.details[1000] || 0} tờ
+</div>
+
+</div>
+`;
+
+});
+
+}
+
+function logout(){
+location.reload();
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+
+CÁCH ĐƯA WEB LÊN ONLINE
+
+1. Vào:
+https://vercel.com
+
+2. Đăng nhập Google
+
+3. Bấm:
+Add New Project
+
+4. Kéo toàn bộ file trong ZIP này lên
+
+5. Chọn Deploy
+
+6. Sau khoảng 1 phút sẽ có link online.
+
+Ví dụ:
+https://bangke-thinhk6.vercel.app
+
+Dùng ổn định trên:
+- iPhone
+- Android
+- Máy tính
