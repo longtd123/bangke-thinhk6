@@ -113,6 +113,7 @@ background:#f5f7fb;
 padding:12px;
 border-radius:12px;
 margin-bottom:10px;
+border-left:5px solid #1e88e5;
 }
 
 .small{
@@ -141,6 +142,19 @@ background:#ffd54f;
 
 .user{
 background:#90caf9;
+}
+
+.detail-box{
+margin-top:10px;
+background:#fff;
+padding:10px;
+border-radius:10px;
+}
+
+.detail-line{
+font-size:14px;
+margin-bottom:4px;
+font-weight:600;
 }
 
 @media(max-width:480px){
@@ -395,7 +409,7 @@ MONEY.forEach(m => {
 box.innerHTML += `
 <div class="money-item">
 
-<label>${m[0]}</label>
+<label><strong>${m[0]}</strong></label>
 
 <input
 type="number"
@@ -514,8 +528,8 @@ Object.keys(h.details).forEach(k => {
 if(h.details[k] > 0){
 
 detailText += `
-<div class="small">
-${Number(k).toLocaleString("vi-VN")} :
+<div class="detail-line">
+${Number(k).toLocaleString("vi-VN")} VNĐ :
 ${h.details[k]} tờ
 </div>
 `;
@@ -528,20 +542,22 @@ box.innerHTML += `
 <div class="history">
 
 <div>
-<strong>
+<strong style="font-size:20px;color:#0a9444">
 ${Number(h.total).toLocaleString("vi-VN")} VNĐ
 </strong>
 </div>
 
 <div class="small">
-Người dùng: ${h.name}
+👤 Người dùng: ${h.name}
 </div>
 
 <div class="small">
-${h.time}
+🕒 ${h.time}
 </div>
 
+<div class="detail-box">
 ${detailText}
+</div>
 
 </div>
 `;
